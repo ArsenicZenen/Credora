@@ -1,0 +1,37 @@
+/* Container for sidebar + main content */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #0f172a; /* dark theme */
+  color: white;
+}
+
+/* Main content area on the right of sidebar */
+.dashboard-content {
+  margin-left: 220px; /* width of your Navbar */
+  padding: 2rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Header inside main content */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+/* Button styling */
+.btn-primary {
+  background-color: #3b82f6;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #2563eb;
+}
