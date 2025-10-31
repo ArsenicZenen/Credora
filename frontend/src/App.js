@@ -6,15 +6,15 @@ import {
 } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./components/user/Dashboard";
 import AdminLogin from "./pages/AdminLogin";
-import AdminLayout from "./components/AdminLayout";
-import AdminDashboard from "./pages/AdminDashboard";
-import AdminRoute from "./components/AdminRoute";
-import ManageUsers from "./components/ManageUsers";
+import AdminLayout from "./components/admin/AdminLayout";
+import AdminDashboard from "./components/admin/AdminDashboard";
+import AdminRoute from "./components/admin/AdminRoute";
+import ManageUsers from "./components/admin/ManageUsers";
 import InfoPage from "./pages/InfoPage";
-import Profile from "./pages/Profile";
-import ManageTransactions from "./components/ManageTransactions";
+import Profile from "./components/user/Profile";
+import ManageTransactions from "./components/admin/ManageTransactions";
 import "./App.css";
 
 function App() {

@@ -6,6 +6,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // 👁️ new state
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -39,7 +40,7 @@ function Login() {
   return (
     <div className="auth-page">
       <div className="form-container">
-        <h2>Login</h2>
+        <h2>Login to Credora</h2>
         <form onSubmit={handleLogin}>
           <input
             type="text"
@@ -48,13 +49,23 @@ function Login() {
             onChange={(e) => setName(e.target.value)}
             required
           />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+
+          <div className="password-field">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <span
+              className="toggle-password"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? "🙈" : "👁️"}
+            </span>
+          </div>
+
           <button type="submit">Login</button>
         </form>
 

@@ -6,6 +6,7 @@ function Register() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // 👁️ new
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
@@ -23,7 +24,7 @@ function Register() {
       const data = await res.json();
       if (res.ok) {
         setMessage("🎉 Registration successful! Redirecting...");
-        setTimeout(() => navigate("/"), 1000);
+        setTimeout(() => navigate("/login"), 1000);
       } else {
         setIsError(true);
         setMessage(data.message || "❌ Registration failed.");
@@ -37,7 +38,7 @@ function Register() {
   return (
     <div className="auth-page">
       <div className="form-container">
-        <h2>Register</h2>
+        <h2>Register to Credora</h2>
         <form onSubmit={handleRegister}>
           <input
             type="text"
@@ -46,13 +47,23 @@ function Register() {
             onChange={(e) => setName(e.target.value)}
             required
           />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+
+          <div className="password-field">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <span
+              className="toggle-password"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? "🙈" : "👁️"}
+            </span>
+          </div>
+
           <button type="submit">Register</button>
         </form>
 
@@ -69,7 +80,7 @@ function Register() {
         )}
 
         <p>
-          Already have an account? <Link to="/">Login</Link>
+          Already have an account? <Link to="/login">Login</Link>
         </p>
       </div>
     </div>

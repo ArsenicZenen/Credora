@@ -237,3 +237,27 @@ RESPONSIVE DESIGN
     font-size: 0.95rem;
   }
 }
+
+.password-field {
+  position: relative;
+}
+
+.password-field input {
+  width: 100%;
+  padding-right: 40px;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  color: #b3b3b3;
+  transition: color 0.3s ease;
+}
+
+.toggle-password:hover {
+  color: #9b6dff; /* theme accent color */
+}

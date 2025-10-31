@@ -34,12 +34,17 @@ router.post("/login", async (req, res) => {
 //get all transactions
 router.get("/transactions", isAdmin, async (req, res) => {
   try {
-    const transaction = await Transaction.find();
-    res.json(transaction);
+    const transactions = await Transaction.find()
+      .populate("user", "name") // 🔥 This will show the user's name
+      .sort({ createdAt: -1 }); // Optional: newest first
+
+    res.json(transactions);
   } catch (err) {
+    console.error("❌ Error fetching transactions:", err);
     res.status(500).json({ message: "Server Error" });
   }
 });
+
 // routes/adminRoutes.js
 router.get("/users", isAdmin, async (req, res) => {
   try {
@@ -50,15 +55,16 @@ router.get("/users", isAdmin, async (req, res) => {
   }
 });
 
-router.delete("/:id", isAdmin, async (req, res) => {
+router.delete("/transactions/:id", isAdmin, async (req, res) => {
   try {
     const transaction = await Transaction.findByIdAndDelete(req.params.id);
     if (!transaction) {
-      res.status(404).json({ message: "Transaction Not Found" });
+      return res.status(404).json({ message: "Transaction Not Found" });
     }
-        res.json({ message: "Transaction deleted successfully" });
 
+    res.json({ message: "Transaction deleted successfully" });
   } catch (err) {
+    console.error("❌ Delete error:", err);
     res.status(500).json({ message: "Server Error" });
   }
 });

@@ -4,13 +4,11 @@ import {
   getTransactions,
   updateTransaction,
   deleteTransaction,
-} from "../services/api";
-import "./Transaction.css"; // Shared styles
-import TransactionsLineChart from "../components/LineChart";
+} from "../../services/api";
+import "./transaction.css";
+import TransactionsLineChart from "./LineChart";
 
-// type = "expense" or "income" passed from Dashboard(Navbar)
 function Transaction({ type }) {
-
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const today = new Date().toISOString().split("T")[0];
@@ -24,20 +22,17 @@ function Transaction({ type }) {
 
   useEffect(() => {
     fetchTransactions();
-  }, [type]); // refetch on type changes
+  }, [type]);
 
-  // Fetch all transactions for the given type
+  // Fetch all transactions
   const fetchTransactions = async () => {
     setLoading(true);
     try {
       const data = await getTransactions(type, token);
       setTransactions(data);
 
-      // Calculate total
-      const totalAmount = data.reduce(
-        (sum, item) => sum + Number(item.amount),
-        0
-      );
+      // Total calculation
+      const totalAmount = data.reduce((sum, item) => sum + Number(item.amount), 0);
       setTotal(totalAmount);
     } catch (err) {
       console.error("❌ Unable to fetch transactions", err);
@@ -47,27 +42,27 @@ function Transaction({ type }) {
     }
   };
 
-  //  Add a new transaction
+  // Add transaction
   const handleAdd = async (e) => {
     e.preventDefault();
     if (!title || !amount || !date)
       return alert("Please enter title, amount, and date");
 
     try {
-      const payload = { title, amount, date, type }; 
+      const payload = { title, amount, date, type };
       const newTransaction = await addTransaction(payload, token);
       setTransactions([newTransaction, ...transactions]);
       setTitle("");
       setAmount("");
       setDate(today);
-      fetchTransactions(); // refresh total
+      fetchTransactions();
     } catch (err) {
       console.error("❌ Failed to add transaction", err);
       alert("Failed to add transaction");
     }
   };
 
-  // ✏️ Edit transaction
+  // Edit transaction
   const handleEdit = (transaction) => {
     setEditingID(transaction._id);
     setTitle(transaction.title);
@@ -75,17 +70,15 @@ function Transaction({ type }) {
     setDate(transaction.date ? transaction.date.split("T")[0] : "");
   };
 
-  //  Update transaction
+  // Update transaction
   const handleUpdate = async (e) => {
     e.preventDefault();
     if (!editingID) return;
 
     try {
-      const payload = { title, amount, date, type }; // ✅ include type too
+      const payload = { title, amount, date, type };
       const updated = await updateTransaction(editingID, payload, token);
-      setTransactions(
-        transactions.map((t) => (t._id === editingID ? updated : t))
-      );
+      setTransactions(transactions.map((t) => (t._id === editingID ? updated : t)));
       setEditingID(null);
       setTitle("");
       setAmount("");
@@ -99,10 +92,9 @@ function Transaction({ type }) {
 
   // Delete transaction
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this transaction?"))
-      return;
+    if (!window.confirm("Are you sure you want to delete this transaction?")) return;
     try {
-      await deleteTransaction(id,token);
+      await deleteTransaction(id, token);
       setTransactions(transactions.filter((t) => t._id !== id));
       fetchTransactions();
     } catch (err) {
@@ -111,17 +103,34 @@ function Transaction({ type }) {
     }
   };
 
+  // Format numbers like 1K, 1M
+  const formatAmount = (num) => {
+    if (num >= 1_000_000) return (num / 1_000_000).toFixed(1) + "M";
+    if (num >= 1_000) return (num / 1_000).toFixed(1) + "K";
+    return num;
+  };
+
   return (
     <div className="transactions-wrap">
+      {/* ===== HEADER SECTION ===== */}
       <div className="transactions-top">
         <h1>
-          Total {type === "expense" ? "Expenses" : "Income"}: ₹{total}
+          Total {type === "expense" ? "Expenses" : "Income"}: ₹
+          {formatAmount(total)}
         </h1>
-      <div className="chart"><TransactionsLineChart transactions={transactions} /> </div>
-       <h3>Manage your {type}</h3>
+
+        <div className="chart">
+          <TransactionsLineChart transactions={transactions} />
+        </div>
+
+        <h3>
+          Manage your <span style={{ color: type === "expense" ? "#ef4444" : "#22c55e" }}>
+            {type}
+          </span>
+        </h3>
       </div>
 
-      {/* Add / Edit Form */}
+      {/* ===== FORM SECTION ===== */}
       <form
         className="transactions-form"
         onSubmit={editingID ? handleUpdate : handleAdd}
@@ -166,24 +175,32 @@ function Transaction({ type }) {
         )}
       </form>
 
-      {/*  Transaction List */}
+      {/* ===== TRANSACTION LIST ===== */}
       <div className="transactions-list-wrap">
         {loading ? (
           <div className="loading">Loading…</div>
         ) : transactions.length === 0 ? (
-          <div className="empty">No {type} yet — add one above.</div>
+          <div className="empty">
+            No {type} yet — add one above.
+          </div>
         ) : (
           <ul className="transactions-list">
             {transactions.map((t) => (
-              <li className="transaction-item" key={t._id}>
+              <li
+                className={`transaction-item ${t.type}`}
+                key={t._id}
+              >
                 <div className="left">
                   <div className="title">{t.title}</div>
                   <div className="meta">
-                    {new Date(t.date || t.createdAt).toLocaleDateString()}
+                    {new Date(t.date || t.createdAt).toLocaleDateString("en-GB")}
                   </div>
                 </div>
+
                 <div className="right">
-                  <div className="amount">₹{t.amount}</div>
+                  <div className="amount">
+                    ₹{Number(t.amount).toLocaleString()}
+                  </div>
                   <div className="actions">
                     <button
                       className="btn small edit"
